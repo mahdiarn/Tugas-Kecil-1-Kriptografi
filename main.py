@@ -1,17 +1,59 @@
-def stdVigenere(plain,key):
-    cipher = ""
-    for idx,val in enumerate(plain):
-        if (val.istitle()):
-            cipher = cipher + chr((((ord(plain[idx])-65) + (ord(key[idx].upper())-65)) % 26) + 65)
-        elif (val.isdigit()):
-            cipher = cipher + val
-        elif (val == " "):
-            cipher = cipher + val
-        else:
-            cipher = cipher + chr((((ord(plain[idx])-97) + (ord(key[idx])-97)) % 26) + 97)
-    return cipher
+import os
+
+def stdVigenere(inputan,key,mode):
+    if(mode == 1):
+        cipher = ""
+        for idx,val in enumerate(inputan):
+            if (val.istitle()):
+                cipher = cipher + chr((((ord(inputan[idx])-65) + (ord(key[idx].upper())-65)) % 26) + 65)
+            elif (val.isdigit()):
+                cipher = cipher + val
+            elif (val == " "):
+                cipher = cipher + val
+            else:
+                cipher = cipher + chr((((ord(inputan[idx])-97) + (ord(key[idx])-97)) % 26) + 97)
+        return cipher
+    elif(mode == 2):
+        plain = ""
+        for idx,val in enumerate(inputan):
+            if (val.istitle()):
+                plain = plain + chr((((ord(inputan[idx])-65) - (ord(key[idx].upper())-65)) % 26) + 65)
+            elif (val.isdigit()):
+                plain = plain + val
+            elif (val == " "):
+                plain = plain + val
+            else:
+                plain = plain + chr((((ord(inputan[idx])-97) - (ord(key[idx])-97)) % 26) + 97)
+        return plain
+    else:
+        return 0
+
+def stdVigenereBytes(inputan,key,mode):
+    if(mode==1):
+        cipher = inputan
+        for i in range(len(cipher)):
+            if (cipher[i] <= 90 and cipher[i] >= 65):
+                cipher[i] = (((cipher[i]-65) + (ord(key[i].upper())-65)) % 26) + 65
+            elif (cipher[i] <= 122 and cipher[i] >= 97):
+                cipher[i] = (((cipher[i]-97) + (ord(key[i])-97)) % 26) + 97
+        return cipher
+    elif(mode==2):
+        plain = inputan
+        for i in range(len(plain)):
+            if (plain[i] <= 90 and plain[i] >= 65):
+                plain[i] = (((plain[i]-65) - (ord(key[i].upper())-65)) % 26) + 65
+            elif (plain[i] <= 122 and plain[i] >= 97):
+                plain[i] = (((plain[i]-97) - (ord(key[i])-97)) % 26) + 97
+        return plain
+    else:
+        return 0
+    
 
 if __name__=="__main__":
+    print("Tentukan mode:")
+    print("1. Enkripsi")
+    print("2. Dekripsi")
+    mode = int(input())
     print("Masukkan jenis input:")
     print("1. Dari Keyboard")
     print("2. Dari File")
@@ -23,9 +65,9 @@ if __name__=="__main__":
     else :
         filename = input("Masukkan nama file:")
         f = open(filename, "rb")
-        plain = f.read()
-        for a in plain:            
-            print(format(a, '02x'))
+        filebyte = f.read()
+        plain = bytearray(filebyte)
+        
         # print(plain)
 
     print("Masukkan jenis enkripsi:")
@@ -43,6 +85,20 @@ if __name__=="__main__":
                 counter = (counter + 1) % len(rawKey)
         else :
             usableKey = rawKey[:len(plain)]
-        print("Hasil enkripsi:",stdVigenere(plain,usableKey))
+        if(mode==1):
+            print("Hasil enkripsi:")
+        else:
+            print("Hasil dekripsi:")
+        if (type(plain) is bytearray) :
+            if(mode==1):
+                with open(filename + ".enc", 'wb') as fo:
+                    fo.write(stdVigenereBytes(plain,usableKey,mode))
+                os.remove(filename)
+            elif(mode==2):
+                with open(filename[:-4], 'wb') as fo:
+                    fo.write(stdVigenereBytes(plain,usableKey,mode))
+                os.remove(filename)
+        else:
+            print(stdVigenere(plain,usableKey,mode))
     else :
         print("Bye!")
