@@ -39,7 +39,6 @@ def generateFullKeyTable():
             temp = listPerKey[swapFirst]
             listPerKey[swapFirst] = listPerKey[swapSecond]
             listPerKey[swapSecond] = temp
-        print(listPerKey)
         table.append(listPerKey)
     return table
 
@@ -167,6 +166,7 @@ def vigenereAsciiForBytes(inputan,key,mode):
         cipher = inputan
         for i in range(len(cipher)):
             cipher[i] = ((cipher[i] + ord(key[i])) % 256)
+        return cipher
     elif(mode==2):
         plain = inputan
         for i in range(len(plain)):
@@ -282,10 +282,12 @@ if __name__=="__main__":
     elif (algorithm == 3):
         rawKey = input("Masukkan kata kunci: ")
         usableKey = generateAutoKey(masukan,rawKey)
+        print("Kunci setelah digenerate: ", usableKey)
         penyajianOutput(stdVigenere(masukan,usableKey,mode),mode)  
     elif (algorithm == 4):
         fileKeyName = input("Masukkan nama file key: ")
         usableKey = generateRunningKey(masukan,fileKeyName)
+        print("Kunci setelah digenerate: ", usableKey)
         penyajianOutput(stdVigenere(masukan,usableKey,mode),mode)  
     elif (algorithm == 5):
         rawKey = input("Masukkan kata kunci: ")
