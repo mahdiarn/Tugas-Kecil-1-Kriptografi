@@ -43,6 +43,34 @@ def generateFullKeyTable():
         table.append(listPerKey)
     return table
 
+def generateAutoKey(input,key):
+    if (len(key) == len(input)):
+        return key
+    elif (len(key) > len(input)):
+        output = ""
+        idx = 0
+        while (len(output) != len(input)):
+            output = output + key[idx]
+            idx += 1
+        return output
+    else:
+        output = key
+        idx = 0
+        while (len(output) != len(input)):
+            output = output + input[idx]
+            idx += 1
+        return output
+
+def generateRunningKey(input,filename):
+    file = open(filename,"r")
+    fileString = file.read()
+    output = ""
+    idx = 0
+    while (len(output) != len(input)):
+        output = output + fileString[idx]
+        idx += 1
+    return output
+
 def stdVigenere(inputan,key,mode):
     if(mode == 1):
         cipher = ""
