@@ -99,6 +99,20 @@ def stdVigenere(inputan,key,mode):
     else:
         return 0
 
+def vigenereAscii(inputan,key,mode):
+    if(mode == 1):
+        cipher = ""
+        for idx,val in enumerate(inputan):
+                cipher = cipher + chr(((ord(inputan[idx])) + (ord(key[idx]))) % 256)
+        return cipher
+    elif(mode == 2):
+        plain = ""
+        for idx,val in enumerate(inputan):
+                plain = plain + chr(((ord(inputan[idx])) - (ord(key[idx]))) % 256)
+        return plain
+    else:
+        return 0
+
 def fullVigenere(inputan,key,mode):    
     if(mode == 1):
         table = generateFullKeyTable()
@@ -148,7 +162,7 @@ def fullVigenere(inputan,key,mode):
     else:
         return 0
 
-def stdVigenereForBytes(inputan,key,mode):
+def vigenereAsciiForBytes(inputan,key,mode):
     if(mode==1):
         cipher = inputan
         for i in range(len(cipher)):
@@ -160,7 +174,66 @@ def stdVigenereForBytes(inputan,key,mode):
         return plain
     else:
         return 0
-    
+
+def tanpaSpasi(masukan):
+    output = ""
+    idx = 0
+    while (idx != len(masukan)):
+        if(masukan[idx] != " "):
+            output = output + masukan[idx]
+        idx += 1    
+    return output
+
+def perLimaHuruf(masukan):
+    raw = ""
+    idx = 0
+    while (idx != len(masukan)):
+        if(masukan[idx] != " "):
+            raw = raw + masukan[idx]
+        idx += 1
+    output = ""
+    idx = 0
+    count = 0
+    while (idx != len(raw)):
+        if(raw[idx] != " "):
+            output = output + raw[idx]
+        idx += 1
+        if(count == 4):
+            output += " "
+        count += 1
+        count = count % 5
+    return output
+
+
+def penyajianOutput(masukan,mode):
+    print("Pilih metode penampilan :")
+    print("1. Apa adanya")
+    print("2. Tanpa spasi")
+    print("3. Per 5 Huruf")
+    pilihanMetode = int(input())
+    hasil = masukan
+    if (pilihanMetode == 1):
+        hasil = masukan
+    elif (pilihanMetode == 2):
+        hasil = tanpaSpasi(masukan)
+    elif (pilihanMetode == 3):
+        hasil = perLimaHuruf(masukan)
+    if(mode == 1):
+        print("Hasil enkripsi: ")    
+    else:
+        print("Hasil dekripsi: ")    
+    print(hasil)
+    if(mode == 1):
+        print("Simpan file cipherteks?")
+        print("1. Ya")
+        print("2. Tidak")
+        isSaveCipher = int(input())
+        if (isSaveCipher == 1):
+            filename = input("Masukkan nama file")
+            file = open(filename,"w")
+            file.write(masukan)
+            file.close()
+    return 0
 
 if __name__=="__main__":
     print("Tentukan mode:")
@@ -182,92 +255,53 @@ if __name__=="__main__":
 
     if (choice == 1) :
         if (mode == 1):
-            input = input("Masukkan plainteks: ")        
-            print("Plainteks:",input)
+            masukan = input("Masukkan plainteks: ")        
+            print("Plainteks:",masukan)
         elif(mode == 2):
-            input = input("Masukkan cipherteks: ")        
-            print("Cipherteks:",input)
+            masukan = input("Masukkan cipherteks: ")        
+            print("Cipherteks:",masukan)
     else :
-        filename = input("Masukkan nama file:")
-        f = open(filename, "rb")
-        filebyte = f.read()
-        input = bytearray(filebyte)
+        if (algorithm == 5):
+            filename = input("Masukkan nama file:")
+            f = open(filename, "rb")
+            filebyte = f.read()
+            masukan = bytearray(filebyte)
+        else:
+            filename = input("Masukkan nama file:")
+            f = open(filename, "r")
+            masukan = f.read()            
 
     if (algorithm == 1):
         rawKey = input("Masukkan kata kunci: ")
-        usableKey = generateRepeatedKey(rawKey,len(input))        
-        if(mode==1):
-            print("Hasil enkripsi:")
-        else:
-            print("Hasil dekripsi:")
-        if (type(input) is bytearray) :
-            if(mode==1):
-                with open(filename + ".enc", 'wb') as fo:
-                    fo.write(stdVigenereBytes(input,usableKey,mode))
-                os.remove(filename)
-            elif(mode==2):
-                with open(filename[:-4], 'wb') as fo:
-                    fo.write(stdVigenereBytes(input,usableKey,mode))
-                os.remove(filename)
-        else:
-            print(stdVigenere(input,usableKey,mode))
+        usableKey = generateRepeatedKey(rawKey,len(masukan))        
+        penyajianOutput(stdVigenere(masukan,usableKey,mode),mode)        
     elif (algorithm == 2):
         rawKey = input("Masukkan kata kunci: ")
-        usableKey = generateRepeatedKey(rawKey,len(input))        
-        if(mode==1):
-            print("Hasil enkripsi:")
-        else:
-            print("Hasil dekripsi:")
-        if (type(input) is bytearray) :
-            if(mode==1):
-                with open(filename + ".enc", 'wb') as fo:
-                    fo.write(stdVigenereBytes(input,usableKey,mode))
-                os.remove(filename)
-            elif(mode==2):
-                with open(filename[:-4], 'wb') as fo:
-                    fo.write(stdVigenereBytes(input,usableKey,mode))
-                os.remove(filename)
-        else:
-            print(fullVigenere(input,usableKey,mode))
+        usableKey = generateRepeatedKey(rawKey,len(masukan))        
+        penyajianOutput(fullVigenere(masukan,usableKey,mode),mode)      
     elif (algorithm == 3):
         rawKey = input("Masukkan kata kunci: ")
-        usableKey = generateAutoKey(input,rawKey)
-        if(mode==1):
-            print("Kunci setelah di auto:")
-            print(usableKey)
-            print("Hasil enkripsi:")
-        else:
-            print("Hasil dekripsi:")
-        if (type(input) is bytearray) :
-            if(mode==1):
-                with open(filename + ".enc", 'wb') as fo:
-                    fo.write(stdVigenereBytes(input,usableKey,mode))
-                os.remove(filename)
-            elif(mode==2):
-                with open(filename[:-4], 'wb') as fo:
-                    fo.write(stdVigenereBytes(input,usableKey,mode))
-                os.remove(filename)
-        else:
-            print(stdVigenere(input,usableKey,mode))
+        usableKey = generateAutoKey(masukan,rawKey)
+        penyajianOutput(stdVigenere(masukan,usableKey,mode),mode)  
     elif (algorithm == 4):
         fileKeyName = input("Masukkan nama file key: ")
-        usableKey = generateRunningKey(input,fileKeyName)
-        if(mode==1):
-            print("Running key:")
-            print(usableKey)
-            print("Hasil enkripsi:")
-        else:
-            print("Hasil dekripsi:")
-        if (type(input) is bytearray) :
+        usableKey = generateRunningKey(masukan,fileKeyName)
+        penyajianOutput(stdVigenere(masukan,usableKey,mode),mode)  
+    elif (algorithm == 5):
+        rawKey = input("Masukkan kata kunci: ")
+        usableKey = generateRepeatedKey(rawKey,len(masukan))        
+        if (type(masukan) is bytearray) :
             if(mode==1):
                 with open(filename + ".enc", 'wb') as fo:
-                    fo.write(stdVigenereBytes(input,usableKey,mode))
+                    fo.write(vigenereAsciiForBytes(masukan,usableKey,mode))
                 os.remove(filename)
+                print("File berhasil dienkripsi")
             elif(mode==2):
                 with open(filename[:-4], 'wb') as fo:
-                    fo.write(stdVigenereBytes(input,usableKey,mode))
+                    fo.write(vigenereAsciiForBytes(masukan,usableKey,mode))
                 os.remove(filename)
+                print("File berhasil didekripsi")
         else:
-            print(stdVigenere(input,usableKey,mode))
+            penyajianOutput(vigenereAscii(masukan,usableKey,mode),mode)  
     else :
         print("Bye!")
